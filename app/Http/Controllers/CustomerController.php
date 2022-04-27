@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-
+use App\Http\Requests\CustomerRequest;
 use App\Http\Resources\CustomerResource;
 use App\Models\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Validator;
 
 class CustomerController extends Controller
 {
@@ -19,17 +18,9 @@ class CustomerController extends Controller
     public function index()
     {
         try {
-            return new CustomerResource(Customer::paginate());
+            return new CustomerResource(Customer::all());
         } catch (\Exception $e) {
-            $return = array(
-                [
-                    "message" => $e->getMessage()
-                ]
-            );
-
-            return (new CustomerResource($return))
-                ->response()
-                ->setStatusCode(Response::HTTP_BAD_REQUEST);
+            return response()->json(['errors' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
     }
 
@@ -40,16 +31,10 @@ class CustomerController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CustomerRequest $request)
     {
         try {
-            $validator = Validator::make($request->all(), [
-                'CompanyName' => 'required|string|max:255',
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json($validator->errors());
-            }
+            $request->validated();
 
             $customer = new Customer();
 
@@ -64,14 +49,7 @@ class CustomerController extends Controller
                 ->response()
                 ->setStatusCode(Response::HTTP_CREATED);
         } catch (\Exception $e) {
-            $return = array(
-                [
-                    "message" => $e->getMessage()
-                ]
-            );
-            return (new CustomerResource($return))
-                ->response()
-                ->setStatusCode(Response::HTTP_FORBIDDEN);
+            return response()->json(['errors' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
     }
 
@@ -88,14 +66,7 @@ class CustomerController extends Controller
                 ->response()
                 ->setStatusCode(Response::HTTP_OK);
         } catch (\Exception $e) {
-            $return = array(
-                [
-                    "message" => $e
-                ]
-            );
-            return (new CustomerResource($return))
-                ->response()
-                ->setStatusCode(Response::HTTP_BAD_REQUEST);
+            return response()->json(['errors' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
     }
 
@@ -109,27 +80,19 @@ class CustomerController extends Controller
     public function update($id, Request $request)
     {
         try {
-
             $customer = Customer::findOrFail($id);
 
             foreach ($request->all() as $key => $value) {
+                if ($key == '_method') continue;
+
                 $customer->$key = $request->$key ?? "";
             }
 
             $customer->save();
 
-            return (new CustomerResource($customer))
-                ->response()
-                ->setStatusCode(Response::HTTP_OK);
+            return (new CustomerResource($customer))->response()->setStatusCode(Response::HTTP_OK);
         } catch (\Exception $e) {
-            $return = array(
-                [
-                    "message" => $e
-                ]
-            );
-            return (new CustomerResource($return))
-                ->response()
-                ->setStatusCode(Response::HTTP_FORBIDDEN);
+            return response()->json(['errors' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
     }
 
@@ -143,16 +106,11 @@ class CustomerController extends Controller
     {
         try {
             $customer = Customer::findOrFail($id);
-            $customer->delete();
+            $deleted = $customer->delete();
 
-            return (new CustomerResource($customer))
-                ->response()
-                ->setStatusCode(Response::HTTP_OK);
+            return response()->json(["data" => ["deleted" => $deleted]], Response::HTTP_ACCEPTED);
         } catch (\Exception $e) {
-            $return = array(["message" => $e]);
-            return (new CustomerResource($return))
-                ->response()
-                ->setStatusCode(Response::HTTP_FORBIDDEN);
+            return response()->json(['errors' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
     }
 

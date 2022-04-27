@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -18,6 +19,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     echo "true";
+});
+
+Route::prefix('/products')->group(function () {
+    Route::get('', [ProductController::class, 'index'])->name('product@index');
 });
 
 
