@@ -22,15 +22,18 @@ class OrderDetail extends Model
         "Discount"
     ];
 
-
-
-    public function products()
+    public function Order()
     {
         return $this->belongsToMany(
-            Product::class,
-            'Order Details',
-            'OrderID',
-            'ProductID'
+            Order::class,
+            'Orders',
+            'OrderID'
         );
+    }
+
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class, "ProductID");
     }
 }

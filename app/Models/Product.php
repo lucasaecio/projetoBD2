@@ -14,6 +14,6 @@ class Product extends Model
 
     public function orderDetails()
     {
-        return $this->belongsToMany("App\Models\OrderDetail", "Order Details");
+        return $this->belongsToMany(OrderDetail::class, "Order Details", "ProductID");
     }
 }

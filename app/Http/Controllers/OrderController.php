@@ -22,13 +22,17 @@ class OrderController extends Controller
     public function index()
     {
         try {
+            $orders = Order::all();
 
-            $orders = DB::table('Orders as o')
-                ->join('Order Details as od', 'o.OrderID', '=', 'o.OrderID')
-                ->join('Products as p', 'p.ProductID', '=', 'od.ProductID')
-                ->join('Employees as e', 'e.EmployeeID', '=', 'o.EmployeeID')
-                ->select(DB::raw("CONCAT(e.FirstName, ' ', e.LastName) as EmployeeFullName"), "od.Quantity", "od.UnitPrice", "p.ProductName", "o.*")
-                ->paginate(10);
+            foreach ($orders  as $order) {
+                $orderDetails = $order->orderDetail()->get();
+
+                foreach ($orderDetails  as $key => $orderDetail) {
+                    $orderDetails[$key]->product = $orderDetail->product()->get();
+                }
+
+                $order->OrderDetails = $orderDetails;
+            }
 
             return new OrderResource($orders);
         } catch (\Exception $e) {
@@ -89,7 +93,7 @@ class OrderController extends Controller
                 }
             }
 
-            $order->products = $order->orderDetail()->get();
+            $order->OrderDetails = $order->orderDetail()->get();
 
             return (new OrderResource($order))
                 ->response()
