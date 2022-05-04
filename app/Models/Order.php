@@ -14,6 +14,15 @@ class Order extends Model
 
     protected $fillable = [
         'CustomerID',
+        'EmployeeID',
+        'ShipVia',
+        'Freight',
+        'ShipName',
+        'ShipAddress',
+        'ShipCity',
+        'ShipRegion',
+        'ShipPostalCode',
+        'ShipCountry',
     ];
 
     public function orderDetail()

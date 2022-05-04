@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ShippersController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -23,6 +25,14 @@ Route::get('/', function () {
 
 Route::prefix('/products')->group(function () {
     Route::get('', [ProductController::class, 'index'])->name('product@index');
+});
+
+Route::prefix('/shippers')->group(function () {
+    Route::get('', [ShippersController::class, 'index'])->name('shipper@index');
+});
+
+Route::prefix('/employees')->group(function () {
+    Route::get('', [EmployeeController::class, 'index'])->name('employee@index');
 });
 
 
