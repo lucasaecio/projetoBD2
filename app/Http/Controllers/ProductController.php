@@ -35,7 +35,7 @@ class ProductController extends Controller
     public function dashboard($SupplierID)
     {
         try {
-            if (!$SupplierID) {
+            if (!$SupplierID || !is_numeric($SupplierID)) {
                 throw new Exception("ID do fornecedor inválido!");
             }
 
