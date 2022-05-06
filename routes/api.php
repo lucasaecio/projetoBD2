@@ -25,6 +25,7 @@ Route::get('/', function () {
 
 Route::prefix('/products')->group(function () {
     Route::get('', [ProductController::class, 'index'])->name('product@index');
+    Route::get('/dashboard/{SupplierID}', [ProductController::class, 'dashboard'])->name('product@dashboard');
 });
 
 Route::prefix('/shippers')->group(function () {

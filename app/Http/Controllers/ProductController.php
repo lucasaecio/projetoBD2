@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
+use Exception;
 use Illuminate\Http\Response;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
@@ -25,6 +27,21 @@ class ProductController extends Controller
                 ->get();
 
             return new ProductResource($products);
+        } catch (\Exception $e) {
+            return response()->json(['errors' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        }
+    }
+
+    public function dashboard($SupplierID)
+    {
+        try {
+            if (!$SupplierID) {
+                throw new Exception("ID do fornecedor inválido!");
+            }
+
+            $dashboard = DB::select('exec RetornaProdutos ?', array($SupplierID));
+
+            return new ProductResource($dashboard);
         } catch (\Exception $e) {
             return response()->json(['errors' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
