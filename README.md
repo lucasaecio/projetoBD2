@@ -1,10 +1,7 @@
 ## ProjetoBD2 - BACKEND - LARAVEL
 
 PROCEDURE:
-
-USE [Northwind]
-GO
-
+````
 CREATE PROCEDURE [dbo].[RetornaProdutos]
 (
 @SupplierID INT
@@ -21,9 +18,10 @@ BEGIN
 	GROUP BY c.CompanyName, p.ProductName
 END;
 GO
+````
 
 TRIGGER:
-
+````
 CREATE TRIGGER impedeInsertForaEstoque ON [Order Details]
 FOR INSERT, UPDATE AS 
 BEGIN 
@@ -48,3 +46,5 @@ BEGIN
 			  WHERE Products.ProductID =(Select i.ProductID from inserted as i JOIN Products as p on p.ProductID = i.ProductID)
 		END
 END;
+GO
+````
