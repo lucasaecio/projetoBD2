@@ -49,8 +49,13 @@ class ProductController extends Controller
             foreach ($allCompanies as $companyName) {
 
                 if (empty($result["companies"][$companyName])) {
+                    $color = $this->randomColor();
+
                     $result["companies"][$companyName] = new stdClass();
                     $result["companies"][$companyName]->data = array();
+                    $result["companies"][$companyName]->backgroundColor = $color;
+                    $result["companies"][$companyName]->borderColor = $color;
+                    $result["companies"][$companyName]->fill = true;
                     $result["companies"][$companyName]->label = $companyName;
                 }
 
@@ -69,7 +74,12 @@ class ProductController extends Controller
         }
     }
 
-    public function findDataInArray($ProductName, $CompanyName, $array)
+    private function randomColor()
+    {
+        return '#' . str_pad(dechex(mt_rand(0, 0xFFFFFF)), 6, '0', STR_PAD_LEFT);
+    }
+
+    private function findDataInArray($ProductName, $CompanyName, $array)
     {
         foreach ($array as $element) {
             if ($CompanyName == $element->CompanyName && $ProductName == $element->ProductName) {

@@ -5,6 +5,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ShippersController;
+use App\Http\Controllers\SupplierController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -34,6 +35,10 @@ Route::prefix('/shippers')->group(function () {
 
 Route::prefix('/employees')->group(function () {
     Route::get('', [EmployeeController::class, 'index'])->name('employee@index');
+});
+
+Route::prefix('/suppliers')->group(function () {
+    Route::get('', [SupplierController::class, 'index'])->name('supplier@index');
 });
 
 
