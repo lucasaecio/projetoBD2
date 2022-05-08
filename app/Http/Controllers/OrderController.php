@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Orders;
 use App\Models\Product;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
@@ -90,6 +91,11 @@ class OrderController extends Controller
                     ]);
 
                     $orderDetails->save();
+
+                    $isOrderDetailInserted = OrderDetail::where('OrderID', '=', $order->OrderID)->where('ProductID', '=',  $requestProduct["ProductID"])->first();
+                    if ($isOrderDetailInserted === null) {
+                        throw new Exception("Falha ao inserir produto");
+                    }
                 }
             }
 
