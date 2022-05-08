@@ -23,7 +23,7 @@ class OrderController extends Controller
     public function index()
     {
         try {
-            $orders = Order::all();
+            $orders = Order::orderBy('OrderID', 'desc')->limit(100)->get();
 
             foreach ($orders  as $order) {
                 $orderDetails = $order->orderDetail()->get();
@@ -91,11 +91,6 @@ class OrderController extends Controller
                     ]);
 
                     $orderDetails->save();
-
-                    $isOrderDetailInserted = OrderDetail::where('OrderID', '=', $order->OrderID)->where('ProductID', '=',  $requestProduct["ProductID"])->first();
-                    if ($isOrderDetailInserted === null) {
-                        throw new Exception("Falha ao inserir produto");
-                    }
                 }
             }
 
