@@ -31,10 +31,7 @@ BEGIN
 			JOIN Products as p on p.ProductID = i.ProductID
 			WHERE i.Quantity > p.UnitsInStock
 		)
-		BEGIN 
-			DELETE FROM [Order Details] WHERE [Order Details].OrderID =(Select i.OrderID from inserted as i) 
-			DELETE FROM Orders WHERE Orders.OrderID =(Select i.OrderID from inserted as i) 
-			
+		BEGIN 			
 			RAISERROR ('Inserção não permitida, Quantidade excede estoque do produto' ,10,1)
 			print 'Inserção não permitida' 
 			ROLLBACK TRANSACTION; 
