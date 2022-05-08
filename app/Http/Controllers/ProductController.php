@@ -8,6 +8,7 @@ use Exception;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use stdClass;
 
 class ProductController extends Controller
 {
@@ -39,11 +40,43 @@ class ProductController extends Controller
                 throw new Exception("ID do fornecedor inválido!");
             }
 
+            $result = array("products" => [], "companies" => []);
             $dashboard = DB::select('exec RetornaProdutos ?', array($SupplierID));
 
-            return new ProductResource($dashboard);
+            $result["products"] = array_unique(array_column($dashboard, 'ProductName')) ?? [];
+            $allCompanies = array_unique(array_column($dashboard, 'CompanyName')) ?? [];
+
+            foreach ($allCompanies as $companyName) {
+
+                if (empty($result["companies"][$companyName])) {
+                    $result["companies"][$companyName] = new stdClass();
+                    $result["companies"][$companyName]->data = array();
+                    $result["companies"][$companyName]->label = $companyName;
+                }
+
+
+                foreach ($result["products"] as $productName) {
+                    $object = $this->findDataInArray($productName, $companyName, $dashboard);
+
+                    $result["companies"][$companyName]->data[] = !$object ? 0 : intval($object->Quantity);
+                }
+            }
+
+
+            return new ProductResource($result);
         } catch (\Exception $e) {
             return response()->json(['errors' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
+    }
+
+    public function findDataInArray($ProductName, $CompanyName, $array)
+    {
+        foreach ($array as $element) {
+            if ($CompanyName == $element->CompanyName && $ProductName == $element->ProductName) {
+                return $element;
+            }
+        }
+
+        return false;
     }
 }
